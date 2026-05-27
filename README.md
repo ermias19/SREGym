@@ -17,7 +17,7 @@
 SREGym is an AI-native platform to enable the design, development, and evaluation of AI agents for Site Reliability Engineering (SRE). The core idea is to create live system environments for SRE agents to solve real-world SRE problems. SREGym provides a comprehensive SRE benchmark suite with a wide variety of problems for evaluating SRE agents and also for training next-generation AI agents.
 <br><br>
 
-![SREGym Overview](/assets/SREGymFigure.png)
+![SREGym Overview](/assets/overview.png)
 
 SREGym is inspired by our prior work on AIOpsLab and ITBench. It is architectured with AI-native usability and extensibility as first-class principles. The SREGym benchmark suites contain 90 different SRE problems. It supports all the problems from AIOpsLab and ITBench, and includes new problems such as OS-level faults, metastable failures, and concurrent failures. See our [problem set](https://sregym.com/problems) for a complete list of problems.
 
@@ -160,10 +160,10 @@ See the full list of supported providers and model strings in the [LiteLLM docs]
 </details>
 
 ## Cite This
-If our work was useful for you, please cite it:
+If our work is useful for you, please cite it:
 
 ```bibtex
-@article{clark:arxiv:26,
+@article{sregym:26,
   author  = {Jackson Clark and Yiming Su and Saad Mohammad Rafid Pial and Yifang Tian and Lily Gniedziejko and Hans-Arno Jacobsen and Yinfang Chen and Tianyin Xu},
   title   = {{SREGym: A Live Benchmark for AI SRE Agents with High-Fidelity Failure Scenarios}},
   journal = {arXiv:2605.07161},
@@ -175,9 +175,7 @@ If our work was useful for you, please cite it:
 ```
 
 ## Acknowledgements
-This project is generously supported by a Slingshot grant from the [Laude Institute](https://www.laude.org/).
-
-https://github.com/user-attachments/assets/e7b2ee27-e7a9-436a-858d-ee58e8bbd61d
+This project is generously supported by a Slingshot grant from the [Laude Institute](https://www.laude.org).
 
 ## License
 Licensed under the [MIT](LICENSE.txt) license.
