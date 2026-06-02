@@ -15,10 +15,18 @@ from sregym.utils.decorators import mark_fault_injected
 
 class FinalizerDeadlock(Problem):
     def __init__(self):
+<<<<<<< HEAD
         app = HotelReservation()
         super().__init__(app=app, namespace=app.namespace)
 
         self.kubectl = KubeCtl()
+=======
+        self.app = HotelReservation()
+        super().__init__(app=self.app, namespace=self.app.namespace)
+
+        self.kubectl = KubeCtl()
+        self.namespace = self.app.namespace
+>>>>>>> bd924703 (Add finalizer deadlock mitigation problem)
         self.configmap_name = "reservation-cleanup-token"
         self.finalizer = "cleanup.reservations.io/pending-cleanup"
         self.faulty_service = self.configmap_name
@@ -41,6 +49,7 @@ class FinalizerDeadlock(Problem):
         )
 
     def _create_finalized_configmap(self):
+<<<<<<< HEAD
         self._delete_existing_configmap()
         self._wait_until_configmap_deleted()
         self._create_configmap_with_finalizer()
@@ -55,6 +64,8 @@ class FinalizerDeadlock(Problem):
                 raise
 
     def _create_configmap_with_finalizer(self):
+=======
+>>>>>>> bd924703 (Add finalizer deadlock mitigation problem)
         core_v1 = self.kubectl.core_v1_api
         body = client.V1ConfigMap(
             metadata=client.V1ObjectMeta(
@@ -70,17 +81,34 @@ class FinalizerDeadlock(Problem):
         )
 
         try:
+<<<<<<< HEAD
             core_v1.create_namespaced_config_map(namespace=self.namespace, body=body, _request_timeout=10)
+=======
+            core_v1.delete_namespaced_config_map(self.configmap_name, self.namespace)
+        except ApiException as e:
+            if e.status != 404:
+                raise
+
+        self._wait_until_configmap_deleted()
+
+        try:
+            core_v1.create_namespaced_config_map(namespace=self.namespace, body=body)
+>>>>>>> bd924703 (Add finalizer deadlock mitigation problem)
         except ApiException as e:
             if e.status == 409:
                 self._clear_finalizer_if_present()
                 self._wait_until_configmap_deleted()
+<<<<<<< HEAD
                 core_v1.create_namespaced_config_map(namespace=self.namespace, body=body, _request_timeout=10)
+=======
+                core_v1.create_namespaced_config_map(namespace=self.namespace, body=body)
+>>>>>>> bd924703 (Add finalizer deadlock mitigation problem)
             else:
                 raise
 
     def _clear_finalizer_if_present(self):
         try:
+<<<<<<< HEAD
             configmap = self.kubectl.core_v1_api.read_namespaced_config_map(
                 self.configmap_name,
                 self.namespace,
@@ -122,13 +150,27 @@ class FinalizerDeadlock(Problem):
 
         raise RuntimeError(f"Failed to clear finalizer from ConfigMap {self.configmap_name}: {output.strip()}")
 
+=======
+            self.kubectl.exec_command(
+                f"kubectl patch configmap {self.configmap_name} -n {self.namespace} "
+                '--type=merge -p \'{"metadata":{"finalizers":[]}}\''
+            )
+        except Exception:
+            # Best-effort cleanup: the ConfigMap may already be gone.
+            return
+
+>>>>>>> bd924703 (Add finalizer deadlock mitigation problem)
     def _wait_until_configmap_deleted(self, timeout_seconds: int = 30):
         core_v1 = self.kubectl.core_v1_api
         deadline = time.monotonic() + timeout_seconds
 
         while time.monotonic() < deadline:
             try:
+<<<<<<< HEAD
                 core_v1.read_namespaced_config_map(self.configmap_name, self.namespace, _request_timeout=10)
+=======
+                core_v1.read_namespaced_config_map(self.configmap_name, self.namespace)
+>>>>>>> bd924703 (Add finalizer deadlock mitigation problem)
             except ApiException as e:
                 if e.status == 404:
                     return
@@ -151,7 +193,11 @@ class FinalizerDeadlock(Problem):
         print("== Fault Recovery ==")
         self._clear_finalizer_if_present()
         self.kubectl.exec_command(
+<<<<<<< HEAD
             f"kubectl delete configmap {self.configmap_name} -n {self.namespace} "
             "--ignore-not-found --wait=false --request-timeout=10s"
+=======
+            f"kubectl delete configmap {self.configmap_name} -n {self.namespace} --ignore-not-found"
+>>>>>>> bd924703 (Add finalizer deadlock mitigation problem)
         )
         print(f"Resource: configmap/{self.configmap_name} | Namespace: {self.namespace}\n")
